@@ -29,6 +29,16 @@
       </ion-header-bar>
       <ion-content class="padding">
         <button class="button" ng-click="toggle()">{{ state }}</button>
+        <div class="row">
+          <div class="col col-20">Nap #</div>
+          <div class="col col-25">Date</div>
+          <div class="col col-30">Nap time</div>
+        </div>
+        <div class="row" ng-repeat="nap in naps">
+          <div class="col col-20">{{ $index + 1 }}</div>
+          <div class="col col-25">{{ nap.t_sleep | date : 'mediumDate' }}</div>
+          <div class="col col-30">{{ nap.t_awake.getHours() - nap.t_sleep.getHours() }} hours and {{ nap.t_awake.getMinutes() - nap.t_sleep.getMinutes() }} minutes</div>
+        </div>
       </ion-content>
     </ion-pane>
   </body>

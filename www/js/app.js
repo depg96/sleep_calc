@@ -15,22 +15,22 @@ angular.module('app', ['ionic'])
 
 .controller('SleepCalcCtrl', ['$scope', function($scope) {
   $scope.state = 'awake';
-  var naps = [];
-  naps.push({ t_awake: '', t_sleep: '' });
-  naps[0].t_sleep = new Date(2015,6,1,7,30);
-  naps[0].t_awake = new Date(2015,6,1,15,30);
+  $scope.naps = [];
+  $scope.naps.push({ t_awake: '', t_sleep: '' });
+  $scope.naps[0].t_sleep = new Date(2015,6,1,7,30);
+  $scope.naps[0].t_awake = new Date(2015,6,1,15,30);
 
   $scope.toggle = function() {
-    if(naps[naps.length-1].t_awake !== '') {
-      naps.push({ t_sleep: '', t_awake: '' });
+    if($scope.naps[$scope.naps.length-1].t_awake !== '') {
+      $scope.naps.push({ t_sleep: '', t_awake: '' });
     }
 
     if($scope.state === 'awake') {
-       naps[naps.length-1].t_sleep = new Date();
+       $scope.naps[$scope.naps.length-1].t_sleep = new Date();
       $scope.state = 'sleeping...';
     }
     else {
-      naps[naps.length-1].t_awake = new Date();
+      $scope.naps[$scope.naps.length-1].t_awake = new Date();
       $scope.state = 'awake';
     }
   };
