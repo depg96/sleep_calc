@@ -1,9 +1,4 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('app', ['ionic'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -17,3 +12,26 @@ angular.module('starter', ['ionic'])
     }
   });
 })
+
+.controller('SleepCalcCtrl', ['$scope', function($scope) {
+  $scope.state = 'awake';
+  var naps = [];
+  naps.push({ t_awake: '', t_sleep: '' });
+  naps[0].t_sleep = new Date(2015,6,1,7,30);
+  naps[0].t_awake = new Date(2015,6,1,15,30);
+
+  $scope.toggle = function() {
+    if(naps[naps.length-1].t_awake !== '') {
+      naps.push({ t_sleep: '', t_awake: '' });
+    }
+
+    if($scope.state === 'awake') {
+       naps[naps.length-1].t_sleep = new Date();
+      $scope.state = 'sleeping...';
+    }
+    else {
+      naps[naps.length-1].t_awake = new Date();
+      $scope.state = 'awake';
+    }
+  };
+}]);
