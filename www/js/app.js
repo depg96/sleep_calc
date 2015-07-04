@@ -13,25 +13,77 @@ angular.module('app', ['ionic'])
   });
 })
 
-.controller('SleepCalcCtrl', ['$scope', function($scope) {
-  $scope.state = 'awake';
-  $scope.naps = [];
-  $scope.naps.push({ t_awake: '', t_sleep: '' });
-  $scope.naps[0].t_sleep = new Date(2015,6,1,7,30);
-  $scope.naps[0].t_awake = new Date(2015,6,1,15,30);
+.controller('SleepCalcCtrl', ['$scope', '$window', '$timeout', 'SleepCalcServ', function($scope, $window, $timeout, SleepCalcServ) {
+  $timeout(function() {
+    update();
+  });
+
+  var update = function() {
+    $scope.naps = SleepCalcServ.all();
+    $scope.state = SleepCalcServ.get();
+  };
 
   $scope.toggle = function() {
-    if($scope.naps[$scope.naps.length-1].t_awake !== '') {
-      $scope.naps.push({ t_sleep: '', t_awake: '' });
-    }
-
     if($scope.state === 'awake') {
-       $scope.naps[$scope.naps.length-1].t_sleep = new Date();
-      $scope.state = 'sleeping...';
+      SleepCalcServ.set();
     }
     else {
-      $scope.naps[$scope.naps.length-1].t_awake = new Date();
-      $scope.state = 'awake';
+      SleepCalcServ.reset();
     }
+    update();
   };
-}]);
+
+  $scope.clear = function() {
+    SleepCalcServ.clear();
+    update();
+  };
+}])
+
+.service('SleepCalcServ',['$window', function($window) {
+  var sleepy = JSON.parse($window.localStorage.sleepy || '{"state":"awake","nap":{"t_sleep":"","t_nap":""},"naps":[]}');
+
+  this.all = function() {
+    return sleepy.naps;
+  };
+
+  this.get = function() {
+    return sleepy.state;
+  };
+
+  this.set = function() {
+    sleepy.state = 'sleeping...';
+    sleepy.nap.t_sleep = Date.now();
+    $window.localStorage.sleepy = JSON.stringify(sleepy);
+  };
+
+  this.reset = function() {
+    sleepy.nap.t_nap = (Date.now() - sleepy.nap.t_sleep);
+    sleepy.state = 'awake';
+    sleepy.naps.push(sleepy.nap);
+    sleepy.nap = { t_sleep: '', t_nap: '' };
+    $window.localStorage.sleepy = JSON.stringify(sleepy);
+  };
+
+  this.clear = function() {
+    sleepy.naps = [];
+    $window.localStorage.sleepy = JSON.stringify(sleepy);
+  };
+}])
+
+.filter('millisecond', function() {
+  return function(ms) {
+    seconds = Math.round((ms/1000)%60).toString();
+    minutes = Math.floor((ms/60000)%60).toString();
+    hours = Math.floor(ms/3600000).toString();
+    if(parseInt(seconds) < 10) {
+      seconds = '0' + seconds;
+    }
+    if(parseInt(minutes) < 10) {
+      minutes = '0' + minutes;
+    }
+    if(parseInt(hours) < 10) {
+      hours = '0' + hours;
+    }
+    return hours + ':' + minutes + ':' + seconds;
+  };
+});

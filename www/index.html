@@ -28,17 +28,21 @@
         <h1 class="title">Sleep Calculator</h1>
       </ion-header-bar>
       <ion-content class="padding">
-        <button class="button" ng-click="toggle()">{{ state }}</button>
-        <div class="row">
-          <div class="col col-20">Nap #</div>
-          <div class="col col-25">Date</div>
-          <div class="col col-30">Nap time</div>
+        <button class="button button-block " ng-click="toggle()" ng-class= "{'color': state==='sleeping...'}">{{ state }}</button>
+        <button class="button button-block" ng-click="clear()">clear naps</button>
+        <div ng-hide="!naps.length">
+          <div class="row">
+            <div class="col col-20">Nap #</div>
+            <div class="col col-50">Date</div>
+            <div class="col">Nap time</div>
+          </div>
+          <div class="row" ng-repeat="nap in naps track by $index">
+            <div class="col col-20">{{ $index + 1 }}</div>
+            <div class="col col-50">{{ nap.t_sleep | date : 'medium' }}</div>
+            <div class="col">{{ nap.t_nap | millisecond }}</div>
+          </div>
         </div>
-        <div class="row" ng-repeat="nap in naps">
-          <div class="col col-20">{{ $index + 1 }}</div>
-          <div class="col col-25">{{ nap.t_sleep | date : 'mediumDate' }}</div>
-          <div class="col col-30">{{ nap.t_awake.getHours() - nap.t_sleep.getHours() }} hours and {{ nap.t_awake.getMinutes() - nap.t_sleep.getMinutes() }} minutes</div>
-        </div>
+        <!-- <pre>{{ naps | json }}</pre> -->
       </ion-content>
     </ion-pane>
   </body>
